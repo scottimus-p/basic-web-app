@@ -1,5 +1,5 @@
 # basic-web-app
-A basic web app that connects to a PostgreSQL database and uses PassportJS
+A basic web app that connects to a PostgreSQL database and uses Passport for authentication
 
 # Main libraries
 - Express
