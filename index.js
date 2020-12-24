@@ -1,57 +1,58 @@
-// setup express
+/************************************************************
+ * Get the stuff we need
+ ************************************************************/
+
 const express = require('express')
 const app = express()
 const port = 3000
 
-// setup sessions
 const session = require('express-session')
 
-// setup body parser
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
-//Loads the handlebars module
 const handlebars = require('express-handlebars')
 
-//Sets our app to use the handlebars engine
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+
+const Pool = require('pg').Pool
+
+
+/************************************************************
+ * Set the stuff up
+ ************************************************************/
+
+// Setup handlebars stuff
 app.set('view engine', 'handlebars')
 
-//Sets handlebars configurations (we will go through them later on)
 app.engine('handlebars', handlebars({
 	layoutsDir: __dirname + '/views/layouts',
 	partialsDir: __dirname + '/views'
 }))
 
-app.use(express.static('public'))
 
-
-// setup PostgreSQL connection
-const conn_params = {
+// Setup the database connection
+const db_conn_params = {
 	user: 'some_user',
 	host: 'localhost',
 	database: 'test',
 	port: 5432
 }
 
-const Pool = require('pg').Pool
-const pool = new Pool(conn_params)
+const pool = new Pool(db_conn_params)
 
-// setup Passport
-var passport = require('passport')
-var LocalStrategy = require('passport-local').Strategy
 
+// Setup the rest of the stuff
 app.use(express.static('public'))
 app.use(cookieParser())
 app.use(bodyParser())
-app.use(session({
-	secret: 'some_secret_key',
-	resave: false,
-	saveUninitialized: false
-}))
+app.use(session({ secret: 'some_secret_key', resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
 app.use(passport.session())
 
 
+// Define how Passport is going to authenticate users
 passport.use(new LocalStrategy((username, password, done) => {
 /*	
 	User.findOne({ username: username }, (err, user) => {
@@ -117,6 +118,7 @@ passport.use(new LocalStrategy((username, password, done) => {
 }))
 
 
+// Define how Passport sets up a session for the user
 passport.serializeUser((user, done) => {
 	console.log(user)
 	done(null, user.username)
@@ -146,6 +148,8 @@ passport.deserializeUser((id, cb) => {
 //	})
 //})
 
+
+// Let's start listening for shit and get this server running
 app.listen(port, () => {
 	console.log(`Server running at localhost ${port}`)
 })
