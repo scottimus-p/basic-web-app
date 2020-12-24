@@ -159,7 +159,6 @@ app.listen(port, () => {
  * Routes
  ************************************************************/
 
-// Home
 app.get('/', (request, response) => {
 	if (isAuthenticated(request)) {
 		response.render('mainLogin', {username: request.session.passport.user, layout: 'base.handlebars'})
@@ -170,7 +169,6 @@ app.get('/', (request, response) => {
 })
 
 
-// Login
 app.get('/login', (request, response) => {
 	response.redirect('/')
 })
@@ -181,19 +179,16 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFail'
 })
 
 
-// Logged in
 app.get('/loggedIn', (request, response) => {
 	response.render('loggedIn', {layout: 'base.handlebars'})
 })
 
 
-// Login Fail
 app.get('/loginFail', (request, response) => {
 	response.render('loginFail', {layout: 'base.handlebars'})
 })
 
 
-// Logout
 app.get('/logout', function(request, response){
   request.logout();
   response.render('logout', {layout: 'base.handlebars'})
